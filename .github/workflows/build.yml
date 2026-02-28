@@ -18,19 +18,22 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          # تثبيت المكتبات البديلة والمتوفرة في النظام الحديث لتعويض المكتبات القديمة
-          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev libtinfo6 libncurses6
+          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev libtinfo6 libncurses6 libtool
           pip install --upgrade pip
           pip install "cython<3.0.0" buildozer kivy
 
       - name: Build with Buildozer
         run: |
-          # قبول التراخيص وبدء البناء
+          # أمر تنظيف قبل البدء لضمان عدم وجود ملفات معطوبة
+          buildozer android clean
+          # بدء البناء مع قبول التراخيص تلقائياً
           yes | buildozer -v android debug
+        env:
+          # تعيين المسارات لضمان استقرار البناء
+          JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: DebtApp-Release-APK
+          name: DebtApp-APK
           path: bin/*.apk
-          

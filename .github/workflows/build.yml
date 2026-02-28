@@ -18,7 +18,12 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev libtinfo5 libncurses5
+          # حل مشكلة المكتبات الناقصة في ubuntu 24.04
+          wget http://azure.archive.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.4-2_amd64.deb
+          wget http://azure.archive.ubuntu.com/ubuntu/pool/universe/n/ncurses/libncurses5_6.4-2_amd64.deb
+          sudo apt install ./libtinfo5_6.4-2_amd64.deb ./libncurses5_6.4-2_amd64.deb
+          
+          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev
           pip install --upgrade pip
           pip install "cython<3.0.0" buildozer kivy
 

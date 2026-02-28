@@ -18,17 +18,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          # حل مشكلة المكتبات الناقصة في ubuntu 24.04
-          wget http://azure.archive.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.4-2_amd64.deb
-          wget http://azure.archive.ubuntu.com/ubuntu/pool/universe/n/ncurses/libncurses5_6.4-2_amd64.deb
-          sudo apt install ./libtinfo5_6.4-2_amd64.deb ./libncurses5_6.4-2_amd64.deb
-          
-          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev
+          # تثبيت المكتبات البديلة والمتوفرة في النظام الحديث لتعويض المكتبات القديمة
+          sudo apt install -y build-essential git python3-dev zip unzip openjdk-17-jdk libffi-dev libssl-dev libtinfo6 libncurses6
           pip install --upgrade pip
           pip install "cython<3.0.0" buildozer kivy
 
       - name: Build with Buildozer
         run: |
+          # قبول التراخيص وبدء البناء
           yes | buildozer -v android debug
 
       - name: Upload APK
@@ -36,3 +33,4 @@ jobs:
         with:
           name: DebtApp-Release-APK
           path: bin/*.apk
+          

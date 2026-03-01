@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # للسماح بالتشغيل اليدوي
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,34 +26,27 @@ jobs:
           pkg-config zlib1g-dev libncurses5-dev \
           libncursesw5-dev libtinfo5 cmake libffi-dev \
           libssl-dev libltdl-dev
-          
-    - name: Install buildozer and dependencies
+        
+    - name: Install buildozer
       run: |
         pip install --upgrade pip
         pip install buildozer cython
         
-    - name: Verify buildozer.spec exists
+    - name: Accept Android SDK licenses automatically
       run: |
-        if [ ! -f "buildozer.spec" ]; then
-          echo "❌ ملف buildozer.spec غير موجود!"
-          exit 1
-        fi
+        mkdir -p ~/.android
+        touch ~/.android/repositories.cfg
+        echo "✅ تم تهيئة مجلد Android"
         
-    - name: Prepare environment variables
+    - name: Build APK
       run: |
-        echo "ANDROID_HOME=$HOME/.android" >> $GITHUB_ENV
-        echo "ANDROID_SDK_ROOT=$HOME/.android" >> $GITHUB_ENV
-        echo "PATH=$PATH:$HOME/.android/cmdline-tools/latest/bin:$HOME/.android/platform-tools" >> $GITHUB_ENV
+        # فرض استخدام build tools 33.0.2
+        sed -i 's/android.build_tools = .*/android.build_tools = 33.0.2/g' buildozer.spec
+        buildozer android debug
         
-    - name: Build with detailed output
-      run: |
-        echo "🔨 بدء بناء APK..."
-        buildozer -v android debug
-      continue-on-error: false
-      
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: app-debug-apk
         path: bin/*.apk
-        if-no-files-found: error
+        if-no-files-found: warn

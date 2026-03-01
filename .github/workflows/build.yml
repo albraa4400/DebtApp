@@ -24,16 +24,12 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # محاولة التنظيف فقط إذا كان المجلد موجوداً لتجنب الخطأ السابق
-          if [ -d ".buildozer" ]; then buildozer android clean; fi
-          # بدء البناء مباشرة
-          yes | buildozer -v android debug
+          buildozer -v android debug
         env:
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: DebtApp-APK
+          name: DebtApp-Final-APK
           path: bin/*.apk
-          

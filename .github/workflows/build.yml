@@ -24,12 +24,11 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          # أمر تنظيف قبل البدء لضمان عدم وجود ملفات معطوبة
-          buildozer android clean
-          # بدء البناء مع قبول التراخيص تلقائياً
+          # محاولة التنظيف فقط إذا كان المجلد موجوداً لتجنب الخطأ السابق
+          if [ -d ".buildozer" ]; then buildozer android clean; fi
+          # بدء البناء مباشرة
           yes | buildozer -v android debug
         env:
-          # تعيين المسارات لضمان استقرار البناء
           JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
 
       - name: Upload APK
@@ -37,3 +36,4 @@ jobs:
         with:
           name: DebtApp-APK
           path: bin/*.apk
+          
